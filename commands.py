@@ -1,6 +1,4 @@
 def echo(*args):
-    print(*args)
-    #return args
+    return args
 
 
-#echo("guw")
