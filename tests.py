@@ -1,4 +1,3 @@
-
 from commands import echo
 def test_echo():
     result = echo("kl", "rt")
