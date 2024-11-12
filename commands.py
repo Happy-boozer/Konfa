@@ -44,3 +44,7 @@ class ShellEmulator:
             print(f"chown: invalid user or group: {user}:{group}")
         except FileNotFoundError:
             print(f"chown: {path}: No such file or directory")
+
+    def echo(self, text):
+        # Вывод текста на экран
+        print(text)
