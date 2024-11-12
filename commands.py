@@ -24,3 +24,11 @@ class ShellEmulator:
                 print(f)
         except FileNotFoundError:
             print(f"ls: cannot access '{path}': No such file or directory")
+
+    def cd(self, path):
+        # Переход в другую директорию
+        full_path = os.path.join(self.fs_path, path)
+        if os.path.isdir(full_path):
+            os.chdir(full_path)
+        else:
+            print(f"cd: {path}: No such directory")
