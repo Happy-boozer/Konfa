@@ -32,3 +32,15 @@ class ShellEmulator:
             os.chdir(full_path)
         else:
             print(f"cd: {path}: No such directory")
+
+    def chown(self, user, group, path):
+        # Изменение владельца и группы файла
+        full_path = os.path.join(self.fs_path, path)
+        try:
+            uid = pwd.getpwnam(user).pw_uid
+            gid = grp.getgrnam(group).gr_gid
+            os.chown(full_path, uid, gid)
+        except KeyError:
+            print(f"chown: invalid user or group: {user}:{group}")
+        except FileNotFoundError:
+            print(f"chown: {path}: No such file or directory")
