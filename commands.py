@@ -1,33 +1,26 @@
-import tarfile
-import os
 from contextlib import contextmanager
+import os
+import tarfile
+import shutil
 import pwd
 import grp
-def echo(*args):
-    print(*args)
+import sys
+import argparse
 
-def ls():
-    tar = tarfile.open("nry.tar")
-    namelist = tar.getnames()
-    for file in namelist:
-        print(file)
 
-def exit():
-    return True
 
-@contextmanager
-def cd(newdir):
-    prevdir = os.getcwd()
-    os.chdir(os.path.expanduser(newdir))
-    try:
-        yield
-    finally:
-        os.chdir(prevdir)
+class ShellEmulator:
+    def __init__(self, tar_path, hostname="localhost"):
+        self.hostname = hostname
+        self.fs_path = "/tmp/emulated_fs"
+        self.mount_fs(tar_path)
 
-def chown(file, newuser, newgroup):
-    with open(file, 'w') as file:
-        user_name = newuser
-        uid = pwd.getpwnam(user_name).pw_uid
-        gid = grp.getgrnam(newgroup).gr_gid
-        # Изменение владельца файла
-        os.chown(file, uid, gid)
+    def ls(self, path="."):
+        # Получаем список файлов в указанной директории
+        full_path = os.path.join(self.fs_path, path)
+        try:
+            files = os.listdir(full_path)
+            for f in files:
+                print(f)
+        except FileNotFoundError:
+            print(f"ls: cannot access '{path}': No such file or directory")
