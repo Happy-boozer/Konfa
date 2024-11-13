@@ -35,3 +35,6 @@ class TestShellEmulator(unittest.TestCase):
         # Пример теста команды chown
         emulator = ShellEmulator(os.path.join(self.test_dir, "fs.tar"))
         # Тут можно проверить изменение владельца, если есть доступ к пользователям
+
+if __name__ == "__main__":
+    unittest.main()
