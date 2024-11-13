@@ -48,3 +48,46 @@ class ShellEmulator:
     def echo(self, text):
         # Вывод текста на экран
         print(text)
+
+    def run(self):
+        while True:
+            command = input(f"{self.hostname}$ ").strip()
+            if command.startswith("ls"):
+                parts = command.split()
+                path = parts[1] if len(parts) > 1 else "."
+                self.ls(path)
+            elif command.startswith("cd"):
+                parts = command.split()
+                if len(parts) > 1:
+                    self.cd(parts[1])
+                else:
+                    print("cd: missing operand")
+            elif command.startswith("chown"):
+                parts = command.split()
+                if len(parts) > 2:
+                    user, group = parts[1].split(":")
+                    self.chown(user, group, parts[2])
+                else:
+                    print("chown: missing operand")
+            elif command.startswith("echo"):
+                parts = command.split(maxsplit=1)
+                if len(parts) > 1:
+                    self.echo(parts[1])
+                else:
+                    print("echo: missing operand")
+            elif command == "exit":
+                break
+            else:
+                print(f"{command}: command not found")
+
+def main():
+    parser = argparse.ArgumentParser(description="Shell Emulator")
+    parser.add_argument("hostname", help="Hostname for the shell prompt")
+    parser.add_argument("tar_path", help="Path to the tar archive containing the virtual filesystem")
+    args = parser.parse_args()
+
+    emulator = ShellEmulator(args.tar_path, args.hostname)
+    emulator.run()
+
+if __name__ == "__main__":
+    main()
