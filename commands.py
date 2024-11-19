@@ -2,12 +2,23 @@ from contextlib import contextmanager
 import os
 import tarfile
 import shutil
-import pwd
-import grp
-import sys
+import shutil
 import argparse
 
 
+class VirtualFileSystem:
+    def __init__(self, tar_path):
+        self.tar_path = tar_path
+        self.archive = tarfile.open(tar_path, "r")
+
+    def list_files(self, path="."):
+        # Получаем список файлов в виртуальной директории
+        path = path.lstrip('/')  # Убираем ведущий слэш, если есть
+        file_names = []
+        for member in self.archive.getmembers():
+            if member.name.startswith(path):
+                file_names.append(member.name[len(path):].lstrip('/'))  # Отрезаем путь
+        return file_names
 
 class ShellEmulator:
     def __init__(self, tar_path, hostname="localhost"):
@@ -36,6 +47,9 @@ class ShellEmulator:
     def chown(self, user, group, path):
         # Изменение владельца и группы файла
         full_path = os.path.join(self.fs_path, path)
+        shutil.chown(full_path, user=None, group=None)
+
+
         try:
             uid = pwd.getpwnam(user).pw_uid
             gid = grp.getgrnam(group).gr_gid
@@ -45,6 +59,7 @@ class ShellEmulator:
         except FileNotFoundError:
             print(f"chown: {path}: No such file or directory")
 
+    
     def echo(self, text):
         # Вывод текста на экран
         print(text)
@@ -83,7 +98,7 @@ class ShellEmulator:
 def main():
     parser = argparse.ArgumentParser(description="Shell Emulator")
     parser.add_argument("hostname", help="Hostname for the shell prompt")
-    parser.add_argument("tar_path", help="Path to the tar archive containing the virtual filesystem")
+    parser.add_argument(r"C:\Users\Antipova\Desktop\Новая папка\nry.tar", help="Path to the tar archive containing the virtual filesystem")
     args = parser.parse_args()
 
     emulator = ShellEmulator(args.tar_path, args.hostname)
