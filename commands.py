@@ -20,6 +20,24 @@ class VirtualFileSystem:
                 file_names.append(member.name[len(path):].lstrip('/'))  # Отрезаем путь
         return file_names
 
+    def is_directory(self, path):
+        # Проверяем, является ли путь директорией в архиве
+        path = path.lstrip('/')
+        for member in self.archive.getmembers():
+            if member.name == path and member.isdir():
+                return True
+        return False
+
+    def extract_file(self, path):
+        path = path.lstrip('/')
+        for member in self.archive.getmembers():
+            if member.name == path:
+                return self.archive.extractfile(member).read()
+        return None
+
+    def close(self):
+        self.archive.close()
+
 class ShellEmulator:
     def __init__(self, tar_path, hostname="localhost"):
         self.hostname = hostname
